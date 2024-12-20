@@ -1,0 +1,18 @@
+{
+  "name": "vlworks/main.feedback",
+  "description": "Дополненный компонент обратной связи",
+  "type": "bitrix-d7-component",
+  "require": {
+    "php": "^8.1",
+    "vlworks/feedback.fields": ">1.*"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Vladislav Lyakishev",
+      "email": "vlad169@yandex.ru"
+    }
+  ],
+  "minimum-stability": "stable",
+  "homepage": ""
+}
