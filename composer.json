@@ -4,7 +4,7 @@
   "type": "bitrix-d7-component",
   "require": {
     "php": "^8.1",
-    "vlworks/feedback.fields": ">1.*"
+    "vlworks/feedback.fields": "^1.0"
   },
   "license": "MIT",
   "authors": [
