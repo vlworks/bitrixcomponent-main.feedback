@@ -21,4 +21,7 @@ $MESS['BASIS_FIELDS_P_INN'] = 'ИНН';
 $MESS['BASIS_FIELDS_P_EVENT'] = 'Мероприятие';
 $MESS['BASIS_FIELDS_P_SOLUTIONS'] = 'Типовое решение';
 $MESS['BASIS_FIELDS_P_ENTITY'] = 'Системное, не выбирать';
+
+$MESS['BASIS_FIELDS_P_E_PHONE'] = 'Email или телефон';
+$MESS['BASIS_FIELDS_P_FIO'] = 'ФИО';
 ?>
