@@ -143,17 +143,29 @@ if($arParams["USE_CAPTCHA"] == "Y")
 {
     ?>
     <script>
-        if (document.querySelector('input[value="<?=$arResult["PARAMS_HASH"];?>"]')?.parentElement) {
-            grecaptcha.ready(function () {
-                grecaptcha.execute('<?=GOOGLE_CAPTCHA_TOKEN;?>', {action: 'homepage'}).then(function (token) {
-                    const $tokenInput = document.createElement('input');
-                    $tokenInput.setAttribute('name', 'token');
-                    $tokenInput.setAttribute('type', 'hidden');
-                    $tokenInput.value = token + '';
+        function isContainToken (elem) {
+            return !!elem.querySelector('input[name="token"]');
+        }
 
-                    document.querySelector('input[value="<?=$arResult["PARAMS_HASH"];?>"]')?.parentElement.appendChild($tokenInput);
+        function initCaptchaToken () {
+            const inputHashNodes = document.querySelectorAll('input[value="<?=$arResult["PARAMS_HASH"];?>"]');
+            if (!inputHashNodes.length) return false;
+
+            inputHashNodes.forEach( node => {
+                const parentElement = node.parentElement;
+                if (isContainToken(parentElement)) return false;
+
+                grecaptcha.ready(function () {
+                    grecaptcha.execute('<?=GOOGLE_CAPTCHA_TOKEN;?>', {action: 'homepage'}).then(function (token) {
+                        const $tokenInput = document.createElement('input');
+                        $tokenInput.setAttribute('name', 'token');
+                        $tokenInput.setAttribute('type', 'hidden');
+                        $tokenInput.value = token + '';
+
+                        parentElement.appendChild($tokenInput);
+                    });
                 });
-            });
+            } )
         }
     </script>
     <?php
