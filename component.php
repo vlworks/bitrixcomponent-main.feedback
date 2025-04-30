@@ -54,18 +54,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '' && (!isset($_P
 	{
         if($arParams["USE_CAPTCHA"] == "Y")
         {
-            if (!isset($_POST['token'])) {
-                $arResult["ERROR_MESSAGE"]["CAPTCHA"] = GetMessage("MF_G_CAPTCHA");
-            }
+            if (empty($_POST['token'])) {
+                $arResult["ERROR_MESSAGE"]["CAPTCHA"] = 'Не передан токен Yandex Smart Captcha';
+            } else {
+                $secret = YANDEX_CAPTCHA_SECRET;
+                $token = $_POST['token'];
 
-            $secret = GOOGLE_CAPTCHA_SECRET;
-            $token = $_POST['token'];
+                $response = file_get_contents('https://smartcaptcha.yandexcloud.net/validate?secret=' . $secret . '&token=' . $token);
+                $result = json_decode($response);
 
-            $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $token);
-            $result = json_decode($response);
-
-            if (!$result->success && $result->score < 0.5) {
-                $arResult["ERROR_MESSAGE"]["CAPTCHA"] = "Y";
+                if ($result->status !== 'ok' && $result->host !== $_SERVER['SERVER_NAME']) {
+                    $arResult["ERROR_MESSAGE"]["CAPTCHA"] = 'Ошибка прохождения Yandex Smart Captcha';
+                }
             }
         }
 
@@ -143,34 +143,34 @@ if($arParams["USE_CAPTCHA"] == "Y")
 {
     ?>
     <script>
-        function isContainToken(elem) {
-            const token = elem.querySelector('input[name="token"]');
-            return !!token;
-        }
+        function yCaptcha() {
+            const hashInput = document.querySelector('input[value="<?=$arResult['PARAMS_HASH']?>"]')
+            const form = hashInput.parentElement;
+            const btn = form?.querySelector('button');
 
-        function initCaptchaToken() {
-            const inputHashNodes = document.querySelectorAll('input[value="<?=$arResult["PARAMS_HASH"];?>"]');
-            if (!inputHashNodes.length) return false;
+            btn?.addEventListener('click', (e) => {
+                    if (!window.smartCaptcha) {
+                        return;
+                    }
 
-            inputHashNodes.forEach(node => {
-                const parentElement = node.parentElement;
+                    if (window.smartCaptcha.getResponse()) {
+                        if (!form.querySelector('input[name="token"]')) {
+                            const tokenInput = document.createElement('input');
+                            tokenInput.setAttribute('type', 'hidden');
+                            tokenInput.setAttribute('name', 'token');
+                            tokenInput.value = window.smartCaptcha.getResponse();
 
-                grecaptcha.ready(function () {
-                    grecaptcha.execute('<?=GOOGLE_CAPTCHA_TOKEN;?>', {action: 'homepage'}).then(function (token) {
-                        if (!isContainToken(parentElement)) {
-                            const $tokenInput = document.createElement('input');
-                            $tokenInput.setAttribute('name', 'token');
-                            $tokenInput.setAttribute('type', 'hidden');
-                            $tokenInput.value = token + '';
-
-                            parentElement.appendChild($tokenInput);
+                            form.appendChild(tokenInput);
                         }
-                    });
-                });
-            })
+                    } else {
+                        e.preventDefault();
+                        Object.assign(window.smartCaptcha, {btn: btn})
+                        window.smartCaptcha.execute(widgetId);
+                    }
+                }
+            )
         }
-
-        initCaptchaToken()
+        yCaptcha();
     </script>
     <?php
 }

@@ -10,14 +10,9 @@ if(!defined("B_PROLOG_INCLUDED")||B_PROLOG_INCLUDED!==true)die();
  * @global CUser $USER
  */
 
-CJSCore::Init(['reCaptchaGoogle']);
 ?>
 <div class="mfeedback">
-<?if(!empty($arResult["ERROR_MESSAGE"]))
-{
-	foreach($arResult["ERROR_MESSAGE"] as $v)
-		ShowError($v);
-}
+<?
 if($arResult["OK_MESSAGE"] <> '')
 {
 	?><div class="mf-ok-text"><?=$arResult["OK_MESSAGE"]?></div><?
