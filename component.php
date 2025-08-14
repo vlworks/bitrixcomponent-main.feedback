@@ -166,6 +166,8 @@ if($arParams["USE_CAPTCHA"] == "Y")
                         e.preventDefault();
                         Object.assign(window.smartCaptcha, {btn: btn})
                         window.smartCaptcha.execute(widgetId);
+
+                        form.closest('dialog')?.close();
                     }
                 }
             )
